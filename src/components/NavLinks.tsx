@@ -1,3 +1,4 @@
+//import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Button, Link, useMediaQuery, useTheme } from '@material-ui/core';
 import KeyboardArrowRightOutlined from '@material-ui/icons/KeyboardArrowRightOutlined';
@@ -34,6 +35,8 @@ interface NavLinkProps {
 
 export const NavLinks = (props: NavLinkProps) => {
   const theme = useTheme(),
+    //history = useHistory(),
+    //navigateToPage = (route: string) => history.push(route),
     scrollPosition = props.scrollPosition,
     isMobile = useMediaQuery(theme.breakpoints.down('sm'), {
       defaultMatches: true,
