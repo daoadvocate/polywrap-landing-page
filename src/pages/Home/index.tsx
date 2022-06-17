@@ -1,10 +1,14 @@
+import React from 'react';
 import { Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { Hero } from '../../components/Hero';
+import { MainHero } from '../../components/Hero';
 import { DemoSection } from '../../components/DemoSection';
-import { Features } from '../../components/Features';
+import { CoreBenefits } from '../../components/CoreBenefits';
 import { Testimonials } from '../../components/Testimonials';
 import ReactGA from 'react-ga';
+import { FeaturedWrappersSection } from '../../components/Wrappers';
+//import { WrapperSection } from '../../components/old_WrapperSection';
+import { fetchWrappers, queryFeaturedWrappers } from '../../components/CMScontent';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,10 +27,11 @@ export const Home = () => {
 
   return (
     <Box className={classes.root}>
-      <Hero />
-      <DemoSection />
-      <Features />
+      <MainHero />
+      {/* <DemoSection /> */}
+      <CoreBenefits />
       <Testimonials />
+
     </Box>
   );
 };

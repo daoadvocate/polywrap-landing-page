@@ -1,3 +1,4 @@
+import {useState, useEffect} from 'react';
 import { Parallax } from 'react-scroll-parallax';
 import {
   Box,
@@ -10,6 +11,8 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 import KeyboardArrowRightOutlined from '@material-ui/icons/KeyboardArrowRightOutlined';
 import { polywrapPalette } from '../theme';
+import { heroContent, ContentfulFetcher } from './ContentfulFetcher';
+import { cloneNode } from 'domhandler';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -147,10 +150,68 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const Hero = () => {
+
+export const MainHero = () => {
   const theme = useTheme();
   const classes = useStyles();
   const matches = useMediaQuery(theme.breakpoints.down('xs'));
+
+  const [heroContent, setHero] = useState<heroContent> (
+    {
+    "title": "Use Web3 Anywhere.",
+    "subtitle": "PRE-ALPHA",
+    "description": "Polywrap is a development platform that enables easy integration of Web3 protocols into any application. It makes it possible for software on any device, written in any language, to read and write data to Web3 protocols",
+    "supportImage": {
+      "url": "whhoops"
+    },
+    "callToAction": "JOIN DISCORD!",
+    "urlForTheCTA": "whoops",
+    
+  });
+  const [hasFailed, setHasFailed] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    // CMS content fetching: Callback version
+    setIsLoading(true);
+
+
+    const cmsQuery = `query  {
+  
+      heroContent(id:"7M4197Qo7DnQ4DWWtBKt7k") { 
+        callToAction{
+          url
+          callToAction
+        }
+        supportImage {
+          url
+        }
+        writtenContent{
+          title
+          subtitle
+          description
+        
+        }    
+      }
+    } 
+    `;
+
+    ContentfulFetcher(cmsQuery).then(
+      (response) => {
+        //On success        
+        const fetchedData: heroContent = response.data.heroContent;
+        console.log(fetchedData)
+        setHero(fetchedData);
+      }, 
+      (error) => {
+        //On fail
+        setHasFailed(true);
+      }
+    ).finally(() => {
+      setIsLoading(false);
+    });
+
+  }, []);
 
   return (
     <Grid
@@ -168,21 +229,26 @@ export const Hero = () => {
         >
           <Box className={classes.heroContent}>
             <Typography
+              variant='subtitle2'
+              color='secondary'
+              className={classes.technicalPreview}
+            >
+             {heroContent.subtitle}
+            </Typography>
+            <Typography
               className={classes.heroTitle}
               color='textPrimary'
               variant='h1'
             >
-              Use Web3 Anywhere.
+             {heroContent.title}
             </Typography>
             <Typography
               className={classes.heroBody}
               color='textSecondary'
               variant='body1'
             >
-              Polywrap is a set of tools that uses Wasm and GraphQL to
-              deliver web3 protocols to any execution environment.
-              Build and publish your protocol wrapper with Polywrap 
-              to be accessible from all types of applications.
+            {heroContent.description}
+
             </Typography>
             <Button
               className={classes.heroButton}
@@ -194,7 +260,7 @@ export const Hero = () => {
               type='submit'
               variant='contained'
             >
-              Join Our Discord
+             {heroContent.callToAction}
             </Button>
           </Box>
         </Parallax>
@@ -213,6 +279,11 @@ export const Hero = () => {
           >
             <img
               className={classes.heroPolywrapper}
+              // TODO: Pass the supportImage that is queried on the CMS
+              // This required modifying hero Type to include the
+              // supportImage data type, similar to the structure used 
+              // for testimonials 
+              // src={someContent.supportImage.url}
               src={process.env.PUBLIC_URL + '/imgs/polywrapper-hero.png'}
               alt='Polywrap Logo'
             />
